@@ -6,6 +6,7 @@ export default class Maps extends Component {
     super(props);
 
     this.state = {
+      api_url: "https://data.edmonton.ca/resource/87ck-293k.json",
       map: false,
       viewport: {
         zoom: 10,
@@ -39,6 +40,40 @@ export default class Maps extends Component {
       });
     });
 
+    map.on("click", "points", e => {
+      const coordinates = e.features[0].geometry.coordinates.slice();
+      const {
+        details,
+        description,
+        impact,
+        duration
+      } = e.features[0].properties;
+
+      while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+        coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+      }
+
+      new MapboxGL.Popup()
+        .setLngLat(coordinates)
+        .setHTML(
+          `
+        <strong>${description}</strong><br />
+        <em>${impact}</em><br />
+        <em>${duration}</em><br />
+        <p>${details}</p>
+        `
+        )
+        .addTo(map);
+    });
+
+    map.on("mouseenter", "points", () => {
+      map.getCanvas().style.cursor = "pointer";
+    });
+
+    map.on("mouseleave", "points", () => {
+      map.getCanvas().style.cursor = "";
+    });
+
     this.setState({ map });
   }
 
@@ -49,7 +84,7 @@ export default class Maps extends Component {
         .then(resp => resp.json())
         .then(resp => this.createFeatureCollection(resp))
         .then(resp => this.setState({ data: resp }))
-        .catch(err => console.log(err));
+        .catch(err => console.log("json request error", err));
     }
   }
 
