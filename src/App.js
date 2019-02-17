@@ -1,31 +1,17 @@
-import React, { Component } from "react";
-import logo from "./logo.svg";
-import "./App.css";
-import Header from "./components/Header";
-import Maps from "./components/Maps";
-import { Container } from "reactstrap";
-require('dotenv').config()
+import { connect } from 'react-redux';
+import { fetchFromAPI } from './store/actions/api_actions';
+import Home from './Home';
 
-
-class App extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      appName: "TrafficApp"
-    };
+const mapStateToProps = state => {
+  return {
+    API: state.APIReducer
   }
+};
 
-  render() {
-    return (
-      <div className="App">
-        <Header appName={this.state.appName} />
-        <Container>
-          <Maps />
-        </Container>
-      </div>
-    );
+const mapDispatchToProps = dispatch => {
+  return {
+    startFetch: () => dispatch(fetchFromAPI())
   }
 }
 
-export default App;
+export default connect(mapStateToProps, mapDispatchToProps)(Home);
