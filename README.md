@@ -1,3 +1,5 @@
+React web app showing the traffic map using Map Box library
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
